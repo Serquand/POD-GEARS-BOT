@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { SwiperImage } from './SwiperImage';
 
 @Entity()
 export class Swiper {
@@ -10,4 +11,7 @@ export class Swiper {
 
     @Column({ type: 'text' })
     description!: string;
+
+    @OneToMany(() => SwiperImage, image => image.linkedTo, { cascade: true })
+    images!: SwiperImage[];
 }
