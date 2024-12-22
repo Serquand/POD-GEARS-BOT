@@ -1,8 +1,9 @@
 import { FindManyOptions } from "typeorm";
 import { AppDataSource } from "../database";
 import { Embed } from "../entities/Embed";
-import { AutocompleteInteraction, ColorResolvable, MessageComponentInteraction, MessageEmbed } from "discord.js";
+import { AutocompleteInteraction, ColorResolvable, MessageComponentInteraction, MessageEmbed, TextBasedChannel } from "discord.js";
 import { sendAutocomplete } from "../utils/autocomplete";
+import { EmbedInChannel } from "../entities/EmbedInChannel";
 
 export default class EmbedService {
     static async createEmbed(embedTitle: string, embedName: string) {
@@ -32,6 +33,17 @@ export default class EmbedService {
             .find(options)
     }
 
+    static async storeEmbedInChannelRecord(informationsToStore: Omit<EmbedInChannel, "uid">) {
+        return await AppDataSource.getRepository(EmbedInChannel).save(informationsToStore);
+    }
+
+    static async sendEmbedInChannel(embed: Embed, channel: TextBasedChannel, type: 'AUTO' | 'BUTTON' = 'AUTO') {
+        const embedToSend = EmbedService.generateEmbed(embed);
+        const message = await channel.send({ embeds: embedToSend ? [embedToSend] : undefined });
+        this.storeEmbedInChannelRecord({ channelId: channel.id, linkedTo: embed, messageId: message.id, swiperType: type });
+        // this.addEmbedSent(channel.id, message.id, type);
+    }
+
     static async getEmbedByUid(uid: string) {
         return await AppDataSource
             .getRepository(Embed)
@@ -47,8 +59,6 @@ export default class EmbedService {
     }
 
     static generateEmbed(embed: Embed): MessageEmbed | undefined {
-        console.log(embed);
-
         if (EmbedService.isEmptyEmbed(embed)) return undefined;
 
         const author = {

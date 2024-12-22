@@ -24,8 +24,8 @@ const command = {
         const embedName = interaction.options.getString('name', true);
         const embedTitle = interaction.options.getString('embed_title', true);
 
-        if(embedTitle.length > 250) {
-            return sendHiddenInteractionResponse(interaction, "Le titre de l'Embed ne peut pas dépasser les 250 caractères !");
+        if(embedTitle.length > 230) {
+            return sendHiddenInteractionResponse(interaction, "Le titre de l'Embed ne peut pas dépasser les 230 caractères !");
         }
 
         if(embedName.length > 250) {
