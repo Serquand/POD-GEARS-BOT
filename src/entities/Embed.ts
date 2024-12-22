@@ -33,7 +33,7 @@ export class Embed {
     imageUrl!: string;
 
     @ManyToOne(() => Swiper, { nullable: true, onDelete: 'SET NULL' })
-    swiper!: Swiper;
+    swiper!: Swiper | undefined | null;
 
     @OneToMany(() => EmbedField, (field) => field.linkedTo, { cascade: true })
     fields!: EmbedField[];
