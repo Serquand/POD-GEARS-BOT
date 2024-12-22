@@ -12,7 +12,7 @@ export class EmbedInChannel {
     @Column({ length: 25, unique: true })
     messageId!: string;
 
-    @ManyToOne(() => Embed, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Embed, (embed) => embed.sentInChannels, { onDelete: 'CASCADE' }) // Relation avec Embed
     linkedTo!: Embed;
 
     @Column({ type: 'enum', enum: ['AUTO', 'BUTTON'], nullable: true })

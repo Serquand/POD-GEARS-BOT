@@ -1,5 +1,7 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Swiper } from "./Swiper";
+import { EmbedField } from "./EmbedField";
+import { EmbedInChannel } from "./EmbedInChannel";
 
 @Entity()
 export class Embed {
@@ -31,7 +33,10 @@ export class Embed {
     imageUrl!: string;
 
     @ManyToOne(() => Swiper, { nullable: true, onDelete: 'SET NULL' })
-    swiperUid!: Swiper;
+    swiper!: Swiper;
+
+    @OneToMany(() => EmbedField, (field) => field.linkedTo, { cascade: true })
+    fields!: EmbedField[];
 
     @Column({ type: 'text', nullable: true })
     thumbnailUrl!: string;
@@ -44,4 +49,7 @@ export class Embed {
 
     @Column({ type: 'text', nullable: true })
     embedUrl!: string;
+
+    @OneToMany(() => EmbedInChannel, (channel) => channel.linkedTo, { cascade: true })
+    sentInChannels!: EmbedInChannel[];
 }

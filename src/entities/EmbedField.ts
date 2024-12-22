@@ -15,6 +15,6 @@ export class EmbedField {
     @Column()
     inline!: boolean;
 
-    @ManyToOne(() => Embed, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Embed, (embed) => embed.fields, { onDelete: 'CASCADE' })
     linkedTo!: Embed;
 }
