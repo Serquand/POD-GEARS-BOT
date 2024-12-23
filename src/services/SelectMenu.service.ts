@@ -76,7 +76,10 @@ export default class SelectMenuService {
     static async getSelectMenuByName(selectMenuName: string) {
         return await AppDataSource
             .getRepository(SelectMenu)
-            .findOne({ where: { name: selectMenuName }, relations: ["options", "inChannels"] });
+            .findOne({
+                where: { name: selectMenuName },
+                relations: ["options", "options.needToSend", "inChannels"]
+            });
     }
 
     static async addSelectMenuOptions(selectMenuOption: Omit<SelectMenuOption, "uid">) {

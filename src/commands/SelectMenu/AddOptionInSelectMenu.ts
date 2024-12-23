@@ -1,4 +1,4 @@
-import { Client, CommandInteraction } from "discord.js";
+import { Client, CommandInteraction, AutocompleteInteraction } from "discord.js";
 import SelectMenuService from "../../services/SelectMenu.service";
 import { sendErrorInteractionResponse, sendHiddenInteractionResponse } from "../../utils/discord";
 import EmbedService from "../../services/Embed.service";
@@ -44,8 +44,8 @@ export default {
     ],
     runSlash: async (client: Client, interaction: CommandInteraction) => {
         const optionLabel = interaction.options.getString('option_label', true);
-        const optionEmoji = interaction.options.getString('option_emoji', true);
-        const optionDescription = interaction.options.getString('option_description', true);
+        const optionEmoji = interaction.options.getString('option_emoji', false);
+        const optionDescription = interaction.options.getString('option_description', false);
         const selectMenuName = interaction.options.getString('select_menu_name', true);
         const embedName = interaction.options.getString('embed_name', true);
 
@@ -80,8 +80,8 @@ export default {
             label: optionLabel,
             linkedTo: selectMenu,
             needToSend: embed,
-            description: optionDescription,
-            emoji: optionEmoji
+            description: optionDescription ?? undefined,
+            emoji: optionEmoji ?? undefined
         }
 
         try {
@@ -92,5 +92,11 @@ export default {
             return sendErrorInteractionResponse(interaction);
         }
     },
-    autocomplete: SelectMenuService.autocompleteWithSelectMenuName
+    autocomplete: (interaction: AutocompleteInteraction) => {
+        if(interaction.options.getFocused(true).name === 'select_menu_name') {
+            return SelectMenuService.autocompleteWithSelectMenuName(interaction);
+        } else {
+            return EmbedService.autocompleteWithEmbedName(interaction);
+        }
+    }
 }

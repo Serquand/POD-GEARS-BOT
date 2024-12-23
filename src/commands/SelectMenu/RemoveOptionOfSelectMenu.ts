@@ -2,10 +2,6 @@ import { AutocompleteInteraction, Client, CommandInteraction } from "discord.js"
 import SelectMenuService from "../../services/SelectMenu.service";
 import { sendErrorInteractionResponse, sendHiddenInteractionResponse } from "../../utils/discord";
 
-const { sendAutocomplete } = require("../tools/autocomplete");
-const { getListSelectMenu, getSelectMenuByName } = require("../services/SelectMenu");
-const { sendBadInteraction } = require("../tools/discord");
-
 export default {
     name: 'remove_option_select_menu',
     description: "Supprime une option d'un Select Menu",
