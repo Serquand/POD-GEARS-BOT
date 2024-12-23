@@ -47,7 +47,10 @@ export default class EmbedService {
     static async getEmbedByUid(uid: string) {
         return await AppDataSource
             .getRepository(Embed)
-            .findOne({ where: { uid }, relations: ["swiper"] });
+            .findOne({
+                where: { uid },
+                relations: ["swiper", "swiper.images", "fields"]
+            });
     }
 
     static isEmptyEmbed(embed: Embed): boolean {

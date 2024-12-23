@@ -1,6 +1,8 @@
 import { Client, Interaction } from "discord.js";
 import { sendErrorInteractionResponse } from "../utils/discord";
 import UpdateEmbedService from "../services/UpdateEmbed.service";
+import SelectMenuInteractionHandler from "../services/SelectMenuInteractionHandler.service";
+import EmbedInteractionHandler from "../services/EmbedInteract.service";
 
 export default {
     name: "interactionCreate",
@@ -28,23 +30,33 @@ export default {
                 console.error(error);
             }
         } else if (interaction.type === 'MESSAGE_COMPONENT') {
-            // if (interaction.isSelectMenu()) {
-            //     const selectMenu = getSelectMenuInChannelByCustomId(interaction.customId);
-            //     if (selectMenu === undefined) return sendErrorInteractionResponse(interaction);
-            //     return selectMenu.respondToInteraction(interaction, client);
-            // } else
-            if (interaction.isButton()) {
+            if (interaction.isSelectMenu()) {
+                const selectMenuInteraction = new SelectMenuInteractionHandler(interaction.customId);
+                await selectMenuInteraction.fetchSelectMenuInChannel();
+
+                if (!selectMenuInteraction.selectMenuInChannel) {
+                    return sendErrorInteractionResponse(interaction);
+                }
+
+                return selectMenuInteraction.respondToInteraction(interaction);
+            } else if (interaction.isButton()) {
                 if (interaction.customId.startsWith('embed')) {
                     return UpdateEmbedService.handleClickOnUpdateEmbedButton(interaction);
-                }
-                // else {
+                } else {
+                    const embedInteractionHandler = new EmbedInteractionHandler(interaction);
+                    try {
+                        await embedInteractionHandler.fetchEmbed();
+                        embedInteractionHandler.updateEmbedSent();
+                    } catch {
+                        return sendErrorInteractionResponse(interaction);
+                    }
                     // const interactionManager = getEmbedInteractManager();
                     // if (!interactionManager || Object.values(interactionManager.allInteractions).length === 0) {
                         // return sendErrorInteractionResponse(interaction);
                     // } else {
                         // return interactionManager.handleInteraction(interaction);
                     // }
-                // }
+                }
             }
         }
         else if (interaction.isModalSubmit()) {
