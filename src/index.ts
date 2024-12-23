@@ -5,6 +5,7 @@ dotenv.config();
 import { initializeDatabase } from "./database";
 import { Client, Collection } from "discord.js";
 import { commandHandler, eventHandler } from "./utils/handlers";
+import RefreshSwiper from "./services/RefreshSwiper.service";
 
 async function main() {
     const client = new Client({ intents: 3276799 });
@@ -15,6 +16,8 @@ async function main() {
     await Promise.all([ eventHandler(client), commandHandler(client) ]);
 
     await initializeDatabase();
+
+    new RefreshSwiper(client);
 }
 
 main();
