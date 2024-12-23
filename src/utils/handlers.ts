@@ -13,8 +13,8 @@ const loadFiles = async (dir: string): Promise<string[]> => {
 export const commandHandler = async (client: Client) => {
     try {
         const commandFiles = await loadFiles("src/commands");
-
-        for (const cmdFile of commandFiles) {
+        for(let i = 0; i < commandFiles.length; i++) {
+            const cmdFile = commandFiles[i];
             try {
                 const cmd = (await import(cmdFile)).default;
 
@@ -27,7 +27,7 @@ export const commandHandler = async (client: Client) => {
 
                 // @ts-ignore
                 client.commands.set(cmd.name, cmd);
-                console.log(`✅ Commande chargée : ${cmd.name}`);
+                console.log(`✅ Commande chargée : ${cmd.name} => (${i + 1} / ${commandFiles.length})`);
             } catch (error) {
                 console.error(`❌ Erreur lors du chargement de la commande ${cmdFile}:`, error);
             }

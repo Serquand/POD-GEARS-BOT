@@ -82,8 +82,8 @@ export default class EmbedService {
     }
 
     static async autocompleteWithEmbedName(interaction: AutocompleteInteraction) {
-        const swiperList = await EmbedService.getEmbedList()
-        return sendAutocomplete(interaction, swiperList.map(embed => embed.name));
+        const embedList = await EmbedService.getEmbedList()
+        return sendAutocomplete(interaction, embedList.map(embed => embed.name));
     }
 
     static async updateSwiperDisplayedImage(interaction: MessageComponentInteraction) {

@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { SelectMenuOption } from "./SelectMenuOptions";
+import { SelectMenuInChannel } from "./SelectMenuInChannel";
 
 @Entity()
 export class SelectMenu {
@@ -13,4 +15,10 @@ export class SelectMenu {
 
     @Column({ length: 50 })
     placeholder!: string;
+
+    @OneToMany(() => SelectMenuOption, (option) => option.linkedTo, { cascade: true })
+    options!: SelectMenuOption[];
+
+    @OneToMany(() => SelectMenuInChannel, (inChannel) => inChannel.linkedTo, { cascade: true })
+    inChannels!: SelectMenuInChannel[];
 }
