@@ -21,13 +21,10 @@ export default {
             // On récupère les commandes de l'API Discord
             const listCommands = interaction.guild.commands.cache;
             listCommands.forEach(command => cachedCommandInformations[command.name] = command.id);
-            console.log('Commands from Discord cache:', cachedCommandInformations);
 
             // Charger dynamiquement les fichiers de commandes
             const commandFiles = await loadFiles('src/commands');
             for (const commandFile of commandFiles) {
-                console.log('Loading command file:', commandFile);
-
                 // Importer la commande depuis le fichier
                 const command = (await import(commandFile)).default;
                 if (command.isDisabled) continue; // Si la commande est désactivée, on la saute
