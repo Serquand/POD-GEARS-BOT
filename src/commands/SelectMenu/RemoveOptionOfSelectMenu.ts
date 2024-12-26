@@ -37,8 +37,7 @@ export default {
 
         try {
             await SelectMenuService.removeOptionFromSelectMenu(selectMenu, optionLabel);
-
-            // TODO: SYNCHRONIZE ALL SELECT MENU
+            await SelectMenuService.synchronizeAllSelectMenu(client, selectMenu.uid);
 
             return sendHiddenInteractionResponse(interaction, "L'option a bien été supprimé !");
         } catch(e) {

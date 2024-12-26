@@ -1,11 +1,12 @@
 import { AutocompleteInteraction, Client, MessageActionRow, MessageSelectMenu, TextBasedChannel } from "discord.js";
 import { AppDataSource } from "../database";
 import { SelectMenu } from "../entities/SelectMenu";
-import { deleteMessage } from "../utils/discord";
+import { deleteMessage, fetchMessage } from "../utils/discord";
 import { sendAutocomplete } from "../utils/autocomplete";
 import { SelectMenuOption } from "../entities/SelectMenuOptions";
 import { SelectMenuInChannel } from "../entities/SelectMenuInChannel";
 import { v4 } from "uuid";
+import { Embed } from "../entities/Embed";
 
 export default class SelectMenuService {
     uid: string | null;
@@ -100,6 +101,11 @@ export default class SelectMenuService {
         });
     }
 
+    static async synchronizeReallyAllSelectMenu (client: Client) {
+        const allSelectMenu = await SelectMenuService.getListSelectMenu();
+        await Promise.all(allSelectMenu.map(async (sm) => await SelectMenuService.synchronizeAllSelectMenu(client, sm.uid)));
+    }
+
     static async autocompleteWithOptionName(interaction: AutocompleteInteraction) {
         const selectMenuName = interaction.options.getString('select_menu_name', true);
         const selectMenu = await SelectMenuService.getSelectMenuByName(selectMenuName);
@@ -110,6 +116,29 @@ export default class SelectMenuService {
     static async autocompleteWithSelectMenuName(interaction: AutocompleteInteraction) {
         const selectMenuList = await SelectMenuService.getListSelectMenu();
         return sendAutocomplete(interaction, selectMenuList.map(selectMenuL => selectMenuL.name));
+    }
+
+    static async getSelectMenuByUid (uid: string) {
+        const selectMenu = await AppDataSource
+            .getRepository(SelectMenu)
+            .findOne({ where: { uid }, relations: ["options", "inChannels", "options.needToSend"] });
+        return selectMenu;
+    }
+
+    static async synchronizeAllSelectMenu(client: Client, uid: string) {
+        const selectMenu = await SelectMenuService.getSelectMenuByUid(uid);
+        if(!selectMenu) return;
+
+        const selectMenuToSend = new MessageActionRow().addComponents(SelectMenuService.generateSelectMenu(selectMenu, selectMenu.uid));
+        await Promise.all([selectMenu.inChannels.map(async (selectMenuSent) => {
+            const message = await fetchMessage(client, selectMenuSent.channelId, selectMenuSent.messageId);
+            if(!message || !('edit'in message)) return;
+            try {
+                await message.edit({ components: [selectMenuToSend] });
+            } catch {
+                return;
+            }
+        })]);
     }
 
     static async deleteSelectMenuByUid(uid: string) {

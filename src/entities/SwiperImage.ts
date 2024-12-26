@@ -12,6 +12,6 @@ export class SwiperImage {
     @Column()
     name!: string;
 
-    @ManyToOne(() => Swiper, { nullable: false })
+    @ManyToOne(() => Swiper, { nullable: false, onDelete: "CASCADE" })
     linkedTo!: Swiper;
 }

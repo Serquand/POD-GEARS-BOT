@@ -3,6 +3,7 @@ import { AppDataSource } from "../database";
 import { SelectMenuInChannel } from "../entities/SelectMenuInChannel";
 import EmbedService from "./Embed.service";
 import { sendErrorInteractionResponse, sendHiddenInteractionResponse } from "../utils/discord";
+import { UsingJoinColumnIsNotAllowedError } from "typeorm";
 
 export default class SelectMenuInteractionHandler {
     uid: string;
@@ -72,7 +73,7 @@ export default class SelectMenuInteractionHandler {
             return await interaction.reply({
                 embeds: [embedToSend],
                 ephemeral: true,
-                components: [this.generateButtonToSwitchSwiperImage(embed.uid)],
+                components: embed.swiper ? [this.generateButtonToSwitchSwiperImage(embed.uid)] : undefined,
             });
         } catch (error) {
             console.error("Error handling interaction:", error);

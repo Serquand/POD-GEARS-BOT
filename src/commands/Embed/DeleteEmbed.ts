@@ -2,6 +2,7 @@ import { AutocompleteInteraction, Client, CommandInteraction } from "discord.js"
 import EmbedService from "../../services/Embed.service";
 import { sendErrorInteractionResponse, sendHiddenInteractionResponse } from "../../utils/discord";
 import { sendAutocomplete } from "../../utils/autocomplete";
+import SelectMenuService from "../../services/SelectMenu.service";
 
 const command = {
     name: "delete_embed",
@@ -25,6 +26,8 @@ const command = {
 
         try {
             await EmbedService.deleteEmbedByName(embedName);
+            await EmbedService.deleteSentEmbed(client, embed);
+            await SelectMenuService.synchronizeReallyAllSelectMenu(client);
             return sendHiddenInteractionResponse(interaction, "L'Embed a bien été supprimé !")
         } catch(err) {
             console.error(err);

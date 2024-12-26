@@ -2,7 +2,7 @@ import { Client } from "discord.js";
 import { promises as fs } from "fs";
 import path from "path";
 
-const loadFiles = async (dir: string): Promise<string[]> => {
+export const loadFiles = async (dir: string): Promise<string[]> => {
     const directoryPath = path.resolve(process.cwd(), dir);
     const files = await fs.readdir(directoryPath, { recursive: true });
     return files

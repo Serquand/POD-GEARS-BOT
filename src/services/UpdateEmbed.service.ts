@@ -205,18 +205,13 @@ export default class UpdateEmbedService {
         }
 
         try {
-            // embed.updateAll(messageEmbed, swiperUid, interaction.client);
-            EmbedService.updateAll();
-            // Update the fields of the Embed
             const newFields = messageEmbed.fields.map((field: EmbedField) => ({
                 name: field.name,
                 inline: field.inline,
                 value: field.value,
                 linkedTo: uid,
             }));
-            console.log("swiper =", swiper);
 
-            // Update the Embed in the DB
             const newModelEmbed = {
                 title: messageEmbed.title,
                 authorName: messageEmbed.author?.name,
@@ -224,7 +219,7 @@ export default class UpdateEmbedService {
                 authorUrl: messageEmbed.author?.url,
                 color: messageEmbed.color ? convertNumberToHexaColor(messageEmbed.color) : undefined,
                 description: messageEmbed.description,
-                imageUrl: swiper === null ? messageEmbed.image?.url : undefined,
+                imageUrl: (!swiper && messageEmbed.image && messageEmbed.image.url) ? messageEmbed.image.url : null,
                 swiper,
                 thumbnailUrl: messageEmbed.thumbnail?.url,
                 footerTitle: messageEmbed.footer?.text,
@@ -238,6 +233,7 @@ export default class UpdateEmbedService {
                 EmbedFieldRepository.save(newFields),
                 (interaction.message as Message).delete()
             ]);
+            await EmbedService.updateAll(interaction.client, embed.uid);
             return sendHiddenInteractionResponse(interaction, "L'Embed a bien été modifié !");
         } catch (error) {
             console.error(error);

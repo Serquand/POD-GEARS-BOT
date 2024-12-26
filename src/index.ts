@@ -21,3 +21,11 @@ async function main() {
 }
 
 main();
+
+// delete_swiper => Update Embed / Synchronize Embed sent
+// add_option_select_menu => Update SM / Synchronize SM
+// delete_select_menu => Delete Sent SM
+// remove_option_select_menu => Update SM / Synchronize SM
+// update_select_menu => Update SM / Synchronize SM
+// delete_embed => Delete sent Embed / Update SM / Synchronize SM
+// update_embed => Update Embed / Synchronize Embed sent

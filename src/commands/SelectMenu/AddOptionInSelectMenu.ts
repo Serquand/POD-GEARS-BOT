@@ -86,6 +86,8 @@ export default {
 
         try {
             await SelectMenuService.addSelectMenuOptions(newSelectMenuOption);
+            await SelectMenuService.synchronizeAllSelectMenu(client, selectMenu.uid);
+
             return sendHiddenInteractionResponse(interaction, "L'option a bien été ajouté");
         } catch (error) {
             console.error(error);

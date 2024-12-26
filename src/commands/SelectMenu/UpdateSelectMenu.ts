@@ -45,7 +45,8 @@ export default {
 
         try {
             await SelectMenuService.updateSelectMenu(selectMenu.uid, newValue);
-            // Synchronize the Select Menu modification
+            await SelectMenuService.synchronizeAllSelectMenu(client, selectMenu.uid);
+
             return sendHiddenInteractionResponse(interaction, "Vous avez bien modifié le SelectMenu !");
         } catch (e) {
             console.error(e);
