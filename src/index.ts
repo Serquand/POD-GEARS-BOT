@@ -15,17 +15,11 @@ async function main() {
 
     await Promise.all([ eventHandler(client), commandHandler(client) ]);
 
-    await initializeDatabase();
+    setInterval(async () => {
+        await initializeDatabase();
+        new RefreshSwiper(client);
+    }, 3000);
 
-    new RefreshSwiper(client);
 }
 
 main();
-
-// delete_swiper => Update Embed / Synchronize Embed sent
-// add_option_select_menu => Update SM / Synchronize SM
-// delete_select_menu => Delete Sent SM
-// remove_option_select_menu => Update SM / Synchronize SM
-// update_select_menu => Update SM / Synchronize SM
-// delete_embed => Delete sent Embed / Update SM / Synchronize SM
-// update_embed => Update Embed / Synchronize Embed sent

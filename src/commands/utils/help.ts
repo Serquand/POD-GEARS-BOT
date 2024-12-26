@@ -23,7 +23,8 @@ export default {
             listCommands.forEach(command => cachedCommandInformations[command.name] = command.id);
 
             // Charger dynamiquement les fichiers de commandes
-            const commandFiles = await loadFiles('src/commands');
+            const basisLocation = process.env.NODE_ENV === "prod" ? 'dist/' : 'src/'
+            const commandFiles = await loadFiles(basisLocation + 'commands');
             for (const commandFile of commandFiles) {
                 // Importer la commande depuis le fichier
                 const command = (await import(commandFile)).default;

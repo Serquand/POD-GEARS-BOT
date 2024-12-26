@@ -11,7 +11,7 @@ services:
     env_file: .env
     environment:
       - MYSQL_DATABASE=$DB_NAME
-      - MYSQL_ROOT_PASSWORD=QuwLE7fs6oBruU7GTHeCoS0uPaMdd9yX9wruDkb52QNY8CxDmz
+      - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
     ports:
       - "8903:8903"
     volumes:

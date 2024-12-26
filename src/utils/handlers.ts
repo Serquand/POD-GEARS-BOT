@@ -2,6 +2,8 @@ import { Client } from "discord.js";
 import { promises as fs } from "fs";
 import path from "path";
 
+const basisLocation = process.env.NODE_ENV === "prod" ? 'dist/' : 'src/'
+
 export const loadFiles = async (dir: string): Promise<string[]> => {
     const directoryPath = path.resolve(process.cwd(), dir);
     const files = await fs.readdir(directoryPath, { recursive: true });
@@ -12,7 +14,7 @@ export const loadFiles = async (dir: string): Promise<string[]> => {
 
 export const commandHandler = async (client: Client) => {
     try {
-        const commandFiles = await loadFiles("src/commands");
+        const commandFiles = await loadFiles(basisLocation + "commands");
         for(let i = 0; i < commandFiles.length; i++) {
             const cmdFile = commandFiles[i];
             try {
@@ -39,7 +41,7 @@ export const commandHandler = async (client: Client) => {
 
 export const eventHandler = async (client: Client) => {
     try {
-        const eventFiles = await loadFiles("src/events");
+        const eventFiles = await loadFiles(basisLocation + "events");
 
         for (const eventFile of eventFiles) {
             try {

@@ -86,7 +86,7 @@ export default class UpdateEmbedService {
         } else if (action === 'description') {
             const titleInput = new TextInputComponent()
                 .setCustomId(customId + '-description')
-                .setLabel('Couleur')
+                .setLabel('Description')
                 .setRequired(false)
                 .setStyle('PARAGRAPH')
 
