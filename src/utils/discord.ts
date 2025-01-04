@@ -10,7 +10,10 @@ export const sendErrorInteractionResponse = (interaction: any) => {
 
 export const fetchMessage = async (client: Client, channelId: string, messageId: string): Promise<Message | null> => {
     const channel = await client.channels.fetch(channelId);
-    if(!channel) return null;
+    if(!channel) {
+        console.log("Coucou");
+        return null;
+    }
 
     if (!(channel instanceof TextChannel || channel instanceof DMChannel || channel instanceof NewsChannel)) {
         console.error('Ce salon n\'est pas textuel, DM ou de type "news".');
@@ -19,8 +22,10 @@ export const fetchMessage = async (client: Client, channelId: string, messageId:
 
     try {
         const message = await channel.messages.fetch(messageId);
+        console.log("Bonjour");
         return message;
     } catch (error) {
+        console.log("Salut", );
         return null;
     }
 };

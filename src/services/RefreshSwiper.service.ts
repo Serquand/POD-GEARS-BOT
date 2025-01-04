@@ -26,6 +26,7 @@ export default class RefreshSwiper {
     }
 
     async removeEmbedSent(embedSentUid: string) {
+        console.log(`Removing embed ${embedSentUid} from sent embeds`);
         await AppDataSource
             .getRepository(EmbedInChannel)
             .delete(embedSentUid);
