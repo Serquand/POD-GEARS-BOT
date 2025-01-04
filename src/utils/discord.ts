@@ -9,7 +9,9 @@ export const sendErrorInteractionResponse = (interaction: any) => {
 }
 
 export const fetchMessage = async (client: Client, channelId: string, messageId: string): Promise<Message | null> => {
+    console.log(channelId, messageId);
     const channel = await client.channels.fetch(channelId);
+    console.log(channel);
     if(!channel) {
         console.log("Coucou");
         return null;
