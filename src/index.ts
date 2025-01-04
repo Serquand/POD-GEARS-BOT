@@ -8,7 +8,7 @@ import { commandHandler, eventHandler } from "./utils/handlers";
 import RefreshSwiper from "./services/RefreshSwiper.service";
 import cron from "node-cron";
 
-const CRON_INTERVAL = "* * * * *";
+const CRON_INTERVAL = "*/5 * * * * *";
 const CRON_PRUNE_INFORMATIONS = "*/10 * * * *";
 let isDatabaseSetup = false;
 
