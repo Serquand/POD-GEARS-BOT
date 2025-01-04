@@ -40,30 +40,34 @@ export default class RefreshSwiper {
                 .find({ relations: ["linkedTo", "linkedTo.swiper", "linkedTo.swiper.images", "linkedTo.fields"] });
             console.log(allEmbedSend.length);
 
-            for (const embedSend of allEmbedSend) {
+            allEmbedSend.map(async (embedSend) => {
+                console.log(new Date());
+
                 const embed = embedSend.linkedTo;
-                if (!embed.swiper) continue;
+                if (!embed.swiper) return;
 
                 const newEmbedToSend = EmbedService.generateEmbed(embed);
-                if (!newEmbedToSend || !newEmbedToSend.image) continue;
+                if (!newEmbedToSend || !newEmbedToSend.image) return;
 
                 const messageToUpdate = await fetchMessage(client, embedSend.channelId, embedSend.messageId);
+                console.log(messageToUpdate);
+
                 if (!messageToUpdate) {
                     console.log(`Message not found for embed ${embedSend.uid} in channel ${embedSend.channelId}`);
                     await this.removeEmbedSent(embedSend.uid);
-                    continue;
+                    return;
                 };
 
                 this.addSentEmbed(embedSend.uid);
 
                 const currentEmbedImage = messageToUpdate.embeds[0]?.image?.url;
-                if (!currentEmbedImage) continue;
+                if (!currentEmbedImage) return;
                 const nextImageUrl = this.findNextImageUrl(embedSend.uid, embed.swiper);
-                if (!nextImageUrl) continue;
+                if (!nextImageUrl) return;
 
                 newEmbedToSend.setImage(nextImageUrl);
                 await messageToUpdate.edit({ embeds: [newEmbedToSend] });
-            }
+            });
         } catch (error) {
             console.error("Error during refreshAllSwiper:", error);
         }
