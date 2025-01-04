@@ -54,6 +54,7 @@ export default class RefreshSwiper {
                 if (!embed.swiper) return;
 
                 const newEmbedToSend = EmbedService.generateEmbed(embed);
+                console.log(newEmbedToSend);
                 if (!newEmbedToSend || !newEmbedToSend.image) return;
 
                 const messageToUpdate = await fetchMessage(client, embedSend.channelId, embedSend.messageId);
