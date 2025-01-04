@@ -25,6 +25,12 @@ export default class RefreshSwiper {
         else this.indexOfSwiperSent[embedSentUid] = 0;
     }
 
+    async removeEmbedSent(embedSentUid: string) {
+        await AppDataSource
+            .getRepository(EmbedInChannel)
+            .delete(embedSentUid);
+    }
+
     async refreshAllSwiper(client: Client) {
         console.log("Beginning of refreshment cycle : ", new Date());
 
@@ -42,7 +48,11 @@ export default class RefreshSwiper {
                 if (!newEmbedToSend || !newEmbedToSend.image) continue;
 
                 const messageToUpdate = await fetchMessage(client, embedSend.channelId, embedSend.messageId);
-                if (!messageToUpdate) continue;
+                if (!messageToUpdate) {
+                    console.log(`Message not found for embed ${embedSend.uid} in channel ${embedSend.channelId}`);
+                    await this.removeEmbedSent(embedSend.uid);
+                    continue;
+                };
 
                 this.addSentEmbed(embedSend.uid);
 
