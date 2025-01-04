@@ -32,6 +32,7 @@ export default class RefreshSwiper {
             const allEmbedSend = await AppDataSource
                 .getRepository(EmbedInChannel)
                 .find({ relations: ["linkedTo", "linkedTo.swiper", "linkedTo.swiper.images", "linkedTo.fields"] });
+            console.log(allEmbedSend.length);
 
             for (const embedSend of allEmbedSend) {
                 const embed = embedSend.linkedTo;
@@ -43,7 +44,6 @@ export default class RefreshSwiper {
                 const messageToUpdate = await fetchMessage(client, embedSend.channelId, embedSend.messageId);
                 if (!messageToUpdate) continue;
 
-                console.log(messageToUpdate.url);
                 this.addSentEmbed(embedSend.uid);
 
                 const currentEmbedImage = messageToUpdate.embeds[0]?.image?.url;
