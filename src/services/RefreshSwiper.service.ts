@@ -12,6 +12,14 @@ export default class RefreshSwiper {
         this.indexOfSwiperSent = {};
     }
 
+    async clearEmbedSentInformations(client: Client) {
+        const allEmbedSend = await AppDataSource.getRepository(EmbedInChannel).find();
+        allEmbedSend.map(async (embedSend) => {
+            const messageToUpdate = await fetchMessage(client, embedSend.channelId, embedSend.messageId);
+            if(!messageToUpdate) this.removeEmbedSent(embedSend.uid);
+        });
+    }
+
     findNextImageUrl(embedSentUid: string, swiper: Swiper) {
         const currentIndex = this.indexOfSwiperSent[embedSentUid] ?? -1;
 
@@ -34,17 +42,13 @@ export default class RefreshSwiper {
 
     async refreshAllSwiper(client: Client) {
         console.log("Beginning of refreshment cycle : ", new Date());
-        let count = 0;
 
         try {
             const allEmbedSend = await AppDataSource
                 .getRepository(EmbedInChannel)
                 .find({ relations: ["linkedTo", "linkedTo.swiper", "linkedTo.swiper.images", "linkedTo.fields"] });
-            console.log(allEmbedSend.length);
 
             allEmbedSend.map(async (embedSend) => {
-                console.log(new Date());
-
                 const embed = embedSend.linkedTo;
                 if (!embed.swiper) return;
 
@@ -52,8 +56,6 @@ export default class RefreshSwiper {
                 if (!newEmbedToSend || !newEmbedToSend.image) return;
 
                 const messageToUpdate = await fetchMessage(client, embedSend.channelId, embedSend.messageId);
-                count ++;
-                console.log(count);
                 if (!messageToUpdate) {
                     console.log(`Message not found for embed ${embedSend.uid} in channel ${embedSend.channelId}`);
                     await this.removeEmbedSent(embedSend.uid);
