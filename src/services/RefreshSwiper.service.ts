@@ -30,7 +30,6 @@ export default class RefreshSwiper {
     }
 
     addSentEmbed(embedSentUid: string) {
-        console.log(this.indexOfSwiperSent);
         if(this.indexOfSwiperSent[embedSentUid]) return;
         else this.indexOfSwiperSent[embedSentUid] = 0;
     }
