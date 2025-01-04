@@ -9,6 +9,7 @@ import RefreshSwiper from "./services/RefreshSwiper.service";
 import cron from "node-cron";
 
 const CRON_INTERVAL = "* * * * *";
+const CRON_PRUNE_INFORMATIONS = "*/10 * * * *";
 let isDatabaseSetup = false;
 
 const refreshSwiper = new RefreshSwiper();
@@ -23,6 +24,9 @@ async function main() {
 
     cron.schedule(CRON_INTERVAL, async () => {
         isDatabaseSetup && refreshSwiper.refreshAllSwiper(client);
+    });
+    cron.schedule(CRON_PRUNE_INFORMATIONS, async () => {
+        isDatabaseSetup && await refreshSwiper.clearEmbedSentInformations(client);
     });
 
     setInterval(async () => {

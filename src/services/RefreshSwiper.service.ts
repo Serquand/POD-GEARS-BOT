@@ -25,6 +25,7 @@ export default class RefreshSwiper {
 
         if (currentIndex === -1) return swiper.images[0]?.url;
         const nextIndex = (currentIndex + 1) % swiper.images.length;
+        this.indexOfSwiperSent[embedSentUid] = nextIndex;
         return swiper.images[nextIndex]?.url;
     }
 
