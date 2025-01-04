@@ -200,8 +200,6 @@ export default class UpdateEmbedService {
         const swiper = swiperName === 'Aucun' ? undefined : (await SwiperService.getSwiperByName(swiperName));
         if (swiperName !== 'Aucun' && !swiper) {
             return sendHiddenInteractionResponse(interaction, "Le Swiper n'a pas été trouvé !");
-        } else if (EmbedService.isEmptyEmbed(messageEmbed)) {
-            return sendHiddenInteractionResponse(interaction, "L'Embed ne peut pas être vide !");
         }
 
         try {
@@ -213,19 +211,23 @@ export default class UpdateEmbedService {
             }));
 
             const newModelEmbed = {
-                title: messageEmbed.title,
-                authorName: messageEmbed.author?.name,
-                authorIconUrl: messageEmbed.author?.iconURL,
-                authorUrl: messageEmbed.author?.url,
+                title: messageEmbed.title ?? null,
+                authorName: messageEmbed.author?.name ?? null,
+                authorIconUrl: messageEmbed.author?.iconURL ?? null,
+                authorUrl: messageEmbed.author?.url ?? null,
                 color: messageEmbed.color ? convertNumberToHexaColor(messageEmbed.color) : undefined,
-                description: messageEmbed.description,
+                description: messageEmbed.description ?? null,
                 imageUrl: (!swiper && messageEmbed.image && messageEmbed.image.url) ? messageEmbed.image.url : null,
                 swiper,
-                thumbnailUrl: messageEmbed.thumbnail?.url,
-                footerTitle: messageEmbed.footer?.text,
-                footerIconUrl: messageEmbed.footer?.iconURL,
-                embedUrl: messageEmbed.url,
+                thumbnailUrl: messageEmbed.thumbnail?.url ?? null,
+                footerTitle: messageEmbed.footer?.text ?? null,
+                footerIconUrl: messageEmbed.footer?.iconURL ?? null,
+                embedUrl: messageEmbed.url ?? null,
             };
+
+            if (EmbedService.isEmptyEmbed(newModelEmbed as Embed)) {
+                return sendHiddenInteractionResponse(interaction, "L'Embed ne peut pas être vide !");
+            }
 
             await EmbedFieldRepository.delete({ linkedTo: embed });
             await Promise.all([

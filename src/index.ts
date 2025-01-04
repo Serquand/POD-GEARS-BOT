@@ -6,6 +6,12 @@ import { initializeDatabase } from "./database";
 import { Client, Collection } from "discord.js";
 import { commandHandler, eventHandler } from "./utils/handlers";
 import RefreshSwiper from "./services/RefreshSwiper.service";
+import cron from "node-cron";
+
+const CRON_INTERVAL = "*/5 * * * * *";
+let isDatabaseSetup = false;
+
+const refreshSwiper = new RefreshSwiper();
 
 async function main() {
     const client = new Client({ intents: 3276799 });
@@ -15,9 +21,13 @@ async function main() {
 
     await Promise.all([ eventHandler(client), commandHandler(client) ]);
 
+    cron.schedule(CRON_INTERVAL, async () => {
+        isDatabaseSetup && refreshSwiper.refreshAllSwiper(client);
+    });
+
     setInterval(async () => {
         await initializeDatabase();
-        new RefreshSwiper(client);
+        isDatabaseSetup = true;
     }, 3000);
 
 }

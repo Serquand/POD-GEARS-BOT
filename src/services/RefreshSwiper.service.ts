@@ -5,41 +5,57 @@ import { Swiper } from "../entities/Swiper";
 import { fetchMessage } from "../utils/discord";
 import EmbedService from "./Embed.service";
 
-const SWIPER_COOLDOWN = 5_000;
-
 export default class RefreshSwiper {
-    client: Client;
-    constructor(client: Client) {
-        this.client = client;
-        setInterval(() => this.refreshAllSwiper(), SWIPER_COOLDOWN);
+    private indexOfSwiperSent: Record<string, number>;
+
+    constructor() {
+        this.indexOfSwiperSent = {};
     }
 
-    findNextImageUrl (currentImageUrl: string, swiper: Swiper) {
-        const currentIndex: number = swiper.images.findIndex(image => image.url === currentImageUrl);
-        const swiperLength = swiper.images.length;
-        const nextIndex = (currentIndex + 1) % swiperLength;
-        return swiper.images[nextIndex].url;
+    findNextImageUrl(embedSentUid: string, swiper: Swiper) {
+        const currentIndex = this.indexOfSwiperSent[embedSentUid] ?? -1;
+
+        if (currentIndex === -1) return swiper.images[0]?.url;
+        const nextIndex = (currentIndex + 1) % swiper.images.length;
+        return swiper.images[nextIndex]?.url;
     }
 
-    async refreshAllSwiper() {
-        const allEmbedSend = await AppDataSource
-            .getRepository(EmbedInChannel)
-            .find({ relations: ["linkedTo", "linkedTo.swiper", "linkedTo.swiper.images", "linkedTo.fields"] });
+    addSentEmbed(embedSentUid: string) {
+        if(this.indexOfSwiperSent[embedSentUid]) return;
+        else this.indexOfSwiperSent[embedSentUid] = 0;
+    }
 
-        allEmbedSend.map(async (embedSend) => {
-            const embed = embedSend.linkedTo;
-            if(!embed.swiper) return;
+    async refreshAllSwiper(client: Client) {
+        console.log("Beginning of refreshment cycle : ", new Date());
 
-            const newEmbedToSend = EmbedService.generateEmbed(embed);
-            if(!newEmbedToSend || !newEmbedToSend.image) return;
+        try {
+            const allEmbedSend = await AppDataSource
+                .getRepository(EmbedInChannel)
+                .find({ relations: ["linkedTo", "linkedTo.swiper", "linkedTo.swiper.images", "linkedTo.fields"] });
 
-            const messageToUpdate = await fetchMessage(this.client, embedSend.channelId, embedSend.messageId);
-            if(!messageToUpdate) return;
+            for (const embedSend of allEmbedSend) {
+                const embed = embedSend.linkedTo;
+                if (!embed.swiper) continue;
 
-            const nextImageUrl = this.findNextImageUrl(messageToUpdate.embeds[0].image!.url, embed.swiper);
-            newEmbedToSend.setImage(nextImageUrl);
+                const newEmbedToSend = EmbedService.generateEmbed(embed);
+                if (!newEmbedToSend || !newEmbedToSend.image) continue;
 
-            await messageToUpdate.edit({ embeds: [newEmbedToSend] });
-        });
+                const messageToUpdate = await fetchMessage(client, embedSend.channelId, embedSend.messageId);
+                if (!messageToUpdate) continue;
+
+                console.log(messageToUpdate.url);
+                this.addSentEmbed(embedSend.uid);
+
+                const currentEmbedImage = messageToUpdate.embeds[0]?.image?.url;
+                if (!currentEmbedImage) continue;
+                const nextImageUrl = this.findNextImageUrl(embedSend.uid, embed.swiper);
+                if (!nextImageUrl) continue;
+
+                newEmbedToSend.setImage(nextImageUrl);
+                await messageToUpdate.edit({ embeds: [newEmbedToSend] });
+            }
+        } catch (error) {
+            console.error("Error during refreshAllSwiper:", error);
+        }
     }
 }
