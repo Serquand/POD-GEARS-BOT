@@ -8,7 +8,7 @@ import { commandHandler, eventHandler } from "./utils/handlers";
 import RefreshSwiper from "./services/RefreshSwiper.service";
 import cron from "node-cron";
 
-const CRON_INTERVAL = "*/5 * * * * *";
+const CRON_REFRESH_SWIPER = "*/10 * * * * *";
 const CRON_PRUNE_INFORMATIONS = "*/10 * * * *";
 let isDatabaseSetup = false;
 
@@ -22,7 +22,7 @@ async function main() {
 
     await Promise.all([ eventHandler(client), commandHandler(client) ]);
 
-    cron.schedule(CRON_INTERVAL, async () => {
+    cron.schedule(CRON_REFRESH_SWIPER, async () => {
         isDatabaseSetup && refreshSwiper.refreshAllSwiper(client);
     });
     cron.schedule(CRON_PRUNE_INFORMATIONS, async () => {
