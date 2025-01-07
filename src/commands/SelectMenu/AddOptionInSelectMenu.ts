@@ -2,7 +2,7 @@ import { Client, CommandInteraction, AutocompleteInteraction } from "discord.js"
 import SelectMenuService from "../../services/SelectMenu.service";
 import { sendErrorInteractionResponse, sendHiddenInteractionResponse } from "../../utils/discord";
 import EmbedService from "../../services/Embed.service";
-import { isValidEmoji } from "../../utils/tools";
+import { isGoodEmoji } from "../../utils/tools";
 
 export default {
     name: 'add_option_select_menu',
@@ -72,7 +72,7 @@ export default {
             return sendHiddenInteractionResponse(interaction, "La description est trop longue. Longueur maximale : 50 caracteres");
         }
 
-        if(optionEmoji && !isValidEmoji(optionEmoji)) {
+        if(optionEmoji && await isGoodEmoji(interaction.channel, optionEmoji)) {
             return sendHiddenInteractionResponse(interaction, "L'emoji n'est pas valide !");
         }
 
