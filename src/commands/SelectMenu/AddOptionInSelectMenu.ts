@@ -72,7 +72,7 @@ export default {
             return sendHiddenInteractionResponse(interaction, "La description est trop longue. Longueur maximale : 50 caracteres");
         }
 
-        if(optionEmoji && await isGoodEmoji(interaction.channel, optionEmoji)) {
+        if(optionEmoji && !(await isGoodEmoji(interaction.channel, optionEmoji))) {
             return sendHiddenInteractionResponse(interaction, "L'emoji n'est pas valide !");
         }
 
