@@ -7,17 +7,11 @@ import EmbedService from "./Embed.service";
 
 export default class RefreshSwiper {
     private indexOfSwiperSent: Record<string, number>;
+    private client: Client;
 
-    constructor() {
+    constructor(client: Client) {
         this.indexOfSwiperSent = {};
-    }
-
-    async clearEmbedSentInformations(client: Client) {
-        const allEmbedSend = await AppDataSource.getRepository(EmbedInChannel).find();
-        allEmbedSend.map(async (embedSend) => {
-            const messageToUpdate = await fetchMessage(client, embedSend.channelId, embedSend.messageId);
-            if(!messageToUpdate) this.removeEmbedSent(embedSend.uid);
-        });
+        this.client = client;
     }
 
     findNextImageUrl(embedSentUid: string, swiper: Swiper) {
@@ -41,7 +35,7 @@ export default class RefreshSwiper {
             .delete(embedSentUid);
     }
 
-    async refreshAllSwiper(client: Client) {
+    async refreshAllSwiper() {
         console.log("Beginning of refreshment cycle : ", new Date());
 
         try {
@@ -56,7 +50,7 @@ export default class RefreshSwiper {
                 const newEmbedToSend = EmbedService.generateEmbed(embed);
                 if (!newEmbedToSend || !newEmbedToSend.image) return;
 
-                const messageToUpdate = await fetchMessage(client, embedSend.channelId, embedSend.messageId);
+                const messageToUpdate = await fetchMessage(this.client, embedSend.channelId, embedSend.messageId);
                 if (!messageToUpdate) {
                     console.log(`Message not found for embed ${embedSend.uid} in channel ${embedSend.channelId}`);
                     await this.removeEmbedSent(embedSend.uid);
