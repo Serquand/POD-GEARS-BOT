@@ -14,6 +14,7 @@ export default class SelectMenuInteractionHandler {
     }
 
     async fetchSelectMenuInChannel(): Promise<void> {
+        console.log(this.uid);
         try {
             this.selectMenuInChannel = await AppDataSource
                 .getRepository(SelectMenuInChannel)
