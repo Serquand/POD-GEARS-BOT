@@ -35,6 +35,8 @@ export default {
                 await selectMenuInteraction.fetchSelectMenuInChannel();
 
                 if (!selectMenuInteraction.selectMenuInChannel) {
+                    console.error("Select menu in channel not found !");
+
                     return sendErrorInteractionResponse(interaction);
                 }
 
