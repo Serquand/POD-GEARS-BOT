@@ -31,16 +31,7 @@ export default {
             }
         } else if (interaction.type === 'MESSAGE_COMPONENT') {
             if (interaction.isSelectMenu()) {
-                const selectMenuInteraction = new SelectMenuInteractionHandler(interaction.customId);
-                await selectMenuInteraction.fetchSelectMenuInChannel();
-
-                if (!selectMenuInteraction.selectMenuInChannel) {
-                    console.error("Select menu in channel not found !");
-
-                    return sendErrorInteractionResponse(interaction);
-                }
-
-                return selectMenuInteraction.respondToInteraction(interaction);
+                return SelectMenuInteractionHandler.respondToInteraction(interaction);
             } else if (interaction.isButton()) {
                 if (interaction.customId.startsWith('embed')) {
                     return UpdateEmbedService.handleClickOnUpdateEmbedButton(interaction);

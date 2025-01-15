@@ -1,9 +1,7 @@
 import { MessageActionRow, MessageButton, SelectMenuInteraction } from "discord.js";
-import { AppDataSource } from "../database";
 import { SelectMenuInChannel } from "../entities/SelectMenuInChannel";
 import EmbedService from "./Embed.service";
 import { sendErrorInteractionResponse, sendHiddenInteractionResponse } from "../utils/discord";
-import { UsingJoinColumnIsNotAllowedError } from "typeorm";
 
 export default class SelectMenuInteractionHandler {
     uid: string;
@@ -11,34 +9,6 @@ export default class SelectMenuInteractionHandler {
 
     constructor(uid: string) {
         this.uid = uid;
-    }
-
-    async fetchSelectMenuInChannel(): Promise<void> {
-        console.log(this.uid);
-        try {
-            this.selectMenuInChannel = await AppDataSource
-                .getRepository(SelectMenuInChannel)
-                .findOne({ where: { uid: this.uid } });
-        } catch (error) {
-            console.error("Failed to fetch SelectMenuInChannel:", error);
-            this.selectMenuInChannel = null; // Gracefully handle error by setting to null
-        }
-    }
-
-    generateButtonToSwitchSwiperImage(customId: string): MessageActionRow {
-        const nextButton = new MessageButton()
-            .setCustomId(`${customId}+next`)
-            .setEmoji("⏭️")
-            .setLabel("Next Image")
-            .setStyle("PRIMARY");
-
-        const previousButton = new MessageButton()
-            .setCustomId(`${customId}+previous`)
-            .setEmoji("⏮️")
-            .setLabel("Previous Image")
-            .setStyle("PRIMARY");
-
-        return new MessageActionRow().addComponents(previousButton, nextButton);
     }
 
     static generateButtonToSwitchSwiperImage(customId: string): MessageActionRow {
@@ -57,7 +27,7 @@ export default class SelectMenuInteractionHandler {
         return new MessageActionRow().addComponents(previousButton, nextButton);
     }
 
-    async respondToInteraction(interaction: SelectMenuInteraction): Promise<void> {
+    static async respondToInteraction(interaction: SelectMenuInteraction): Promise<void> {
         try {
             const embedName = interaction.values[0];
             const embed = await EmbedService.getEmbedByName(embedName);
@@ -74,7 +44,7 @@ export default class SelectMenuInteractionHandler {
             return await interaction.reply({
                 embeds: [embedToSend],
                 ephemeral: true,
-                components: embed.swiper ? [this.generateButtonToSwitchSwiperImage(embed.uid)] : undefined,
+                components: embed.swiper ? [SelectMenuInteractionHandler.generateButtonToSwitchSwiperImage(embed.uid)] : undefined,
             });
         } catch (error) {
             console.error("Error handling interaction:", error);
