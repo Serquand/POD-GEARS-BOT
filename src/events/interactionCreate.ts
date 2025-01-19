@@ -8,6 +8,8 @@ export default {
     name: "interactionCreate",
     once: false,
     async execute(client: Client, interaction: Interaction) {
+        console.log(interaction.type, interaction.customId);
+
         if (interaction.isCommand()) {
             // @ts-ignore
             const cmd = client.commands.get(interaction.commandName);
