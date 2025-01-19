@@ -8,7 +8,7 @@ export default {
     name: "interactionCreate",
     once: false,
     async execute(client: Client, interaction: Interaction) {
-        console.log(interaction.type, interaction.customId);
+        console.log(interaction.type);
 
         if (interaction.isCommand()) {
             // @ts-ignore
@@ -35,6 +35,7 @@ export default {
             if (interaction.isSelectMenu()) {
                 return SelectMenuInteractionHandler.respondToInteraction(interaction);
             } else if (interaction.isButton()) {
+                console.log(interaction.customId);
                 if (interaction.customId.startsWith('embed')) {
                     return UpdateEmbedService.handleClickOnUpdateEmbedButton(interaction);
                 } else {
