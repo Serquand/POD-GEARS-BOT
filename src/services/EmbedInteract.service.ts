@@ -49,7 +49,7 @@ export default class EmbedInteractionHandler {
         const currentIndex: number = this.currentImageIndex;
         const swiperLength = this.embed.swiper!.images.length;
 
-        if(!currentIndex) {
+        if(currentIndex === undefined) {
             this.futureIndex = 0;
         } else {
             this.futureIndex = this.action === "previous" ?
@@ -59,6 +59,8 @@ export default class EmbedInteractionHandler {
     }
 
     findNextImageUrl() {
+        console.log(this.embed.swiper!.images, this.futureIndex, this.embed.swiper!.images[this.futureIndex]);
+
         return this.embed.swiper!.images[this.futureIndex].url;
     }
 }
