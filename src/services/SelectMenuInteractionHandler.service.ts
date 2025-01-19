@@ -11,15 +11,15 @@ export default class SelectMenuInteractionHandler {
         this.uid = uid;
     }
 
-    static generateButtonToSwitchSwiperImage(customId: string): MessageActionRow {
+    static generateButtonToSwitchSwiperImage(customId: string, currentImageIndex: number = 0): MessageActionRow {
         const nextButton = new MessageButton()
-            .setCustomId(`${customId}+next`)
+            .setCustomId(`${customId}.${currentImageIndex}+next`)
             .setEmoji("⏭️")
             .setLabel("Next Image")
             .setStyle("PRIMARY");
 
         const previousButton = new MessageButton()
-            .setCustomId(`${customId}+previous`)
+            .setCustomId(`${customId}.${currentImageIndex}+previous`)
             .setEmoji("⏮️")
             .setLabel("Previous Image")
             .setStyle("PRIMARY");
