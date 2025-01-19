@@ -43,12 +43,6 @@ export default {
                     } catch {
                         return sendErrorInteractionResponse(interaction);
                     }
-                    // const interactionManager = getEmbedInteractManager();
-                    // if (!interactionManager || Object.values(interactionManager.allInteractions).length === 0) {
-                        // return sendErrorInteractionResponse(interaction);
-                    // } else {
-                        // return interactionManager.handleInteraction(interaction);
-                    // }
                 }
             }
         }

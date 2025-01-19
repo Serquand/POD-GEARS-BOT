@@ -36,8 +36,6 @@ export default class RefreshSwiper {
     }
 
     async refreshAllSwiper() {
-        console.log("Beginning of refreshment cycle : ", new Date());
-
         try {
             const allEmbedSend = await AppDataSource
                 .getRepository(EmbedInChannel)
