@@ -27,7 +27,7 @@ export default class EmbedInteractionHandler {
         const embedToSend = EmbedService.generateEmbed(this.embed);
         if(!embedToSend) throw new Error();
 
-        this.findNextImageUrl();
+        this.findNextIndex();
         const nextImageUrl = this.findNextImageUrl();
         embedToSend.setImage(nextImageUrl);
 
