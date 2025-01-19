@@ -59,6 +59,7 @@ export default class EmbedInteractionHandler {
     }
 
     findNextImageUrl() {
+        console.log(this.embed.swiper!.images, this.futureIndex, this.embed.swiper!.images[this.futureIndex]);
         return this.embed.swiper!.images[this.futureIndex].url;
     }
 }
